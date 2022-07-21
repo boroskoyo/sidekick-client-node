@@ -42,6 +42,7 @@
       <ul>
         <li><a href="#prerequisites">Prerequisites</a></li>
         <li><a href="#installation">Installation</a></li>
+        <li><a href="#example-usage">Example Usage</a></li>
       </ul>
     </li>
     <li><a href="#roadmap">Roadmap</a></li>
@@ -137,6 +138,7 @@ tested with node v16.14.2
    ```js
     "sidekick_token": "<>"
    ```
+
 ### Example usage
 You can use Sidekick client with any db integration, here is a elasticsearch integration example:
 
