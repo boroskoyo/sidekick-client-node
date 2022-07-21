@@ -1,6 +1,5 @@
 <div id="top"></div>
-**Warning**
-This repo is moved to official Sidekick Org. https://github.com/runsidekick/sidekick-client-node :shipit:
+**Warning** This repository is moving to official Sidekick Org https://github.com/runsidekick/sidekick-client-node :shipit:
 
 <!-- PROJECT SHIELDS -->
 
