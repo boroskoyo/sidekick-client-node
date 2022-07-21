@@ -176,9 +176,7 @@ You can use Sidekick client with any db integration, here is a elasticsearch int
 
 
 4. Run your app!
-   ```sh
-   npm start
-   ```
+
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 
