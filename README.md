@@ -1,5 +1,5 @@
 <div id="top"></div>
-This repo is moved to official Sidekick Org. [Sidekick Node.js Client](https://github.com/runsidekick/sidekick-client-node). :shipit:
+This repo is moved to official Sidekick Org. https://github.com/runsidekick/sidekick-client-node :shipit:
 
 <!-- PROJECT SHIELDS -->
 
