@@ -9,15 +9,12 @@
   <a href="https://www.runsidekick.com">
     <img src="Sidekick_Logo.svg" alt="Logo" width="200" height="80">
   </a>
-  <h2 align="center">+</h2>
-   <a href="https://www.runsidekick.com">
-    <img src="Elasticsearch_logo.png" alt="Logo" width="227" height="50">
-  </a>
 
-  <h3 align="center">Sidekick Recipes: Elasticsearch Ingest</h3>
+
+  <h3 align="center">Sidekick Node.js client</h3>
 
   <p align="center">
-    Send your logs and traces to Elasticsearch in seconds!
+    Node.js client for Sidekick. Send your Sidekick logs and traces to any target in seconds!
     <br />
     <a href="https://docs.runsidekick.com/"><strong>Explore the docs »</strong></a>
     <br />
@@ -35,7 +32,7 @@
   <summary>Table of Contents</summary>
   <ol>
     <li>
-      <a href="#about-the-recipe">About The Recipe</a>
+      <a href="#about-the-recipe">About</a>
       <ul>
         <li><a href="#built-with">Built With</a></li>
       </ul>
@@ -47,7 +44,6 @@
         <li><a href="#installation">Installation</a></li>
       </ul>
     </li>
-    <li><a href="#usage">Usage</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contact">Contact</a></li>
   </ol>
@@ -56,19 +52,17 @@
 
 
 <!-- ABOUT THE PROJECT -->
-## About The Recipe
+## About Sidekick
 
-
-### Related blog post: https://medium.com/runsidekick/sidekick-recipes-1-elasticsearch-ingest-561d0970c030
-
-<br>
 Sidekick is a production debugging and on-demand logging tool where you can debug your running applications while they keep on running. Sidekick provides the ability to add logs and put non-breaking breakpoints in your application code which captures the snapshot of the application state, the call stack, variables, etc.
 
 Sidekick Actions:
 * A tracepoint is basically a non-breaking remote breakpoint. In short, it takes a screenshot of the variables when the code hits that line.
 * Logpoints open the way for dynamic logging to Sidekick users. Replacing traditional logging with dynamic logging has the potential to lower stage sizes, costs, and time for log searching while adding the ability to add new logpoints without editing the source code, redeploying or restarting the application
+## Client Features
 
-This recipe aims to help you send your collected tracepoint & logpoint events to your own Elasticsearch instances.
+* A tracepoint is basically a non-breaking remote breakpoint. In short, it takes a screenshot of the variables when the code hits that line.
+* Logpoints open the way for dynamic logging to Sidekick users. Replacing 
 
 
 <p align="right">(<a href="#top">back to top</a>)</p>
@@ -78,14 +72,8 @@ This recipe aims to help you send your collected tracepoint & logpoint events to
 ### Built With
 
 * [ws](https://github.com/websockets/ws)
-* [@elastic/elasticsearch](https://github.com/elastic/elasticsearch-js)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
-
-
-
-<!-- GETTING STARTED -->
-## Getting Started
 
 
 ### Prerequisites
@@ -96,24 +84,64 @@ tested with node v16.14.2
   npm install npm@latest -g
   ```
 
+
+<!-- GETTING STARTED -->
+## Getting Started
+
+
 ### Installation
 
 1. Install sidekick-client
    ```sh
    npm i sidekick-client
    ```
-2. Install NPM packages
-   ```sh
-   npm install
+
+2. Import sidekickConnect from sidekick-client
+    
+    ```js
+        const { sidekickConnect } = require('sidekick-client')
+    ```
+3. Create an `ingest` function that will send collected data to desired target:
+    ```js
+        function ingestFunc () {
+            return async function (data) {
+                // Implement your own function to send data to any target
+            }
+        }
+    ```
+4. Initialize Sidekick client with proper parameters.
+    
+    ```js
+        const { sidekickConnect } = require('sidekickingesterbeta')
+
+        const sidekickClient = {
+            sidekick_email : <sidekick_email>, 
+            sidekick_password : <sidekick_password>, 
+            tracepointFunction : ingestFunc(),
+            logpointFunction : ingestFunc(),
+            stdout : false // enable console log
+        }
+
+        sidekickConnect(sidekickClient);
+        ```
+
+  If you have an on-premise setup add the fields below to client object:
+
+   ```js
+    "sidekick_host": "ws://127.0.0.1",
+    "sidekick_port": "7777"
    ```
 
-### Example usage
-You can use sidekick client with any db integration, here is a elasticsearch integration example:
+  If have your user token you can use it instead of email & password :
 
-1. Edit `config.json` according to your needs
    ```js
-    "elasticsearch-url": "<>",
-    "elasticsearch-apikey": "<>",
+    "sidekick_token": "<>"
+   ```
+### Example usage
+You can use Sidekick client with any db integration, here is a elasticsearch integration example:
+
+1. Create a `config.json` according to your needs
+   ```js
     "sidekick_tracepoint_index": "sidekick_tracepoint",
     "sidekick_logpoint_index": "sidekick_logpoint",
     "sidekick_email":"<>",
@@ -122,20 +150,10 @@ You can use sidekick client with any db integration, here is a elasticsearch int
 
 2. Create an `ingest` function with using elasticsearch client:
     ```js
-        const client = new Client({
-            node: config['elasticsearch-url'],
-            auth: { apiKey: config['elasticsearch-apikey'] }
-        })
 
         function ingestFunc (index) {
             return async function (data) {
-                
-                client.index({
-                    index: index,
-                    document: data.frames[0].variables
-                }).then((res)=>{
-                    console.log("Items saved: \n",res)
-                })
+                console.log(JSON.stringify({index,data}));
             }
         }
     ```
@@ -145,21 +163,17 @@ You can use sidekick client with any db integration, here is a elasticsearch int
         const { sidekickConnect } = require('sidekickingesterbeta')
 
         const sidekickClient = {
-            sidekick_host : config['sidekick_host'], 
-            sidekick_port : config['sidekick_port'], 
-            sidekick_token : config['sidekick_token'], 
             sidekick_email : config['sidekick_email'], 
             sidekick_password : config['sidekick_password'], 
             tracepointFunction : ingestFunc(config['sidekick_tracepoint_index']),
-            logpointFunction : ingestFunc(config['sidekick_logpoint_index']),
-            stdout : true //console log
+            logpointFunction : ingestFunc(config['sidekick_logpoint_index'])
         }
 
         sidekickConnect(sidekickClient);
         ```
 
 
-4. Run!
+4. Run your app!
    ```sh
    npm start
    ```
@@ -167,25 +181,12 @@ You can use sidekick client with any db integration, here is a elasticsearch int
 
 
 
-<!-- USAGE EXAMPLES -->
-## Usage
-
-You can also run this recipe in a container. For this purpose a Dockerfile is located in the directory.
-
-<p align="right">(<a href="#top">back to top</a>)</p>
-
-
-
 <!-- ROADMAP -->
 ## Roadmap
 
-- [x] Add Tracepoint Support
-- [x] Add Logpoint Support
-- [x] Add Logpoint Detail setting
-- ~~[ ] Filter Logpoints~~
-- ~~[ ] Filter Tracepoints~~
-- [x] Custom ingest function (this also includes the filtering options above)
-- [ ] Update with the offical Sidekick client
+- [x] Add websocket support
+- [x] Custom ingest function
+- [ ] Add support for programattically putting logpoints & tracepoints
 
 
 
@@ -198,5 +199,8 @@ You can also run this recipe in a container. For this purpose a Dockerfile is lo
 Barış Kaya - [@boroskoyo](https://twitter.com/boroskoyo)
 
 Sidekick: [website](https://www.runsidekick.com)
+
+## Special Thanks
+Emin Bilgiç - [linkedin](https://www.linkedin.com/in/eminbilgic/)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
