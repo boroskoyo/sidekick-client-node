@@ -16,7 +16,6 @@ var sidekickConnect = function (clientInfo) {
   const stdout = clientInfo.stdout;
   const tracepointFunction = clientInfo.tracepointFunction;
   const logpointFunction = clientInfo.logpointFunction;
-  const lpDetail = clientInfo.lpDetail;
 
   const options = {
     headers: {
@@ -54,7 +53,7 @@ var sidekickConnect = function (clientInfo) {
         }else if (dataJSON.name === "LogPointEvent") {
         
           if (logpointFunction) {
-              logpointFunction(data);
+              logpointFunction(dataJSON);
           }else{
             console.log("Logpoint function might not be initialized")
           }
