@@ -1,6 +1,8 @@
 <div id="top"></div>
 **Warning** This repository is moving to official Sidekick Org https://github.com/runsidekick/sidekick-client-node :shipit:
 
+you can get the package from the npm: https://www.npmjs.com/package/@runsidekick/sidekick-client
+
 <!-- PROJECT SHIELDS -->
 
 <!-- PROJECT LOGO -->
